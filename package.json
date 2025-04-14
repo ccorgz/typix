@@ -1,0 +1,25 @@
+{
+  "name": "typix",
+  "version": "1.0.01",
+  "description": "A lightweight and secure password hashing library using HMAC-SHA512.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "hmac",
+    "password",
+    "hash",
+    "security",
+    "sha512"
+  ],
+  "author": "Ccorgz",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.2",
+    "typescript": "^5.8.3"
+  }
+}
