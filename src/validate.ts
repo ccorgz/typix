@@ -1,24 +1,4 @@
-export interface Field {
-  name: string;
-  type: string;
-}
-
-export interface Options {
-  fields: Field[];
-  strict: boolean;
-}
-
-export interface InvalidField {
-  field: string;
-  expectedType: string;
-  receivedValue: any;
-}
-
-export interface ValidationResult {
-  message: string;
-  isValid: boolean;
-  expectedFields: InvalidField[];
-}
+import { Options, ValidationResult } from "../types/types";
 
 export async function validate<T extends Record<string, any>>(
   options: Partial<Options>,
@@ -59,7 +39,7 @@ export async function validate<T extends Record<string, any>>(
     }
   };
 
-  for (const { name, type } of config.fields) {
+  for (const { name, type, validateValue } of config.fields) {
     const value: any = data[name];
     let isValid: boolean = true;
 
@@ -73,15 +53,22 @@ export async function validate<T extends Record<string, any>>(
       }
     }
 
+    if (isValid && validateValue && !validateValue(value)) {
+      isValid = false;
+    }
+
     if (!isValid) {
       result.isValid = false;
       result.expectedFields.push({
         field: name,
         expectedType: type,
+        receivedType: typeof value,
         receivedValue: value,
+        errorType: validateValue && !validateValue(value) ? "value" : "typing",
       });
     }
   }
+
   result.message =
     result.isValid == false
       ? "One or more field validations failed"

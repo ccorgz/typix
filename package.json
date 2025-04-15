@@ -1,18 +1,21 @@
 {
   "name": "typix",
-  "version": "1.0.01",
-  "description": "A lightweight and secure password hashing library using HMAC-SHA512.",
+  "version": "1.0.02",
+  "description": "A TypeScript library for validating object typings and values with custom rules, offering both strict type checking and value validation.",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "jest"
   },
   "keywords": [
-    "hmac",
-    "password",
-    "hash",
-    "security",
-    "sha512"
+    "typescript",
+    "object validation",
+    "type checking",
+    "value validation",
+    "strict validation",
+    "custom rules",
+    "typings",
+    "data validation"
   ],
   "author": "Ccorgz",
   "license": "MIT",

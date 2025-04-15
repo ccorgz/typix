@@ -1,84 +1,118 @@
-# hmacpass 🔐
 
-A lightweight and secure Node.js library for hashing and verifying passwords using HMAC-SHA512 with salt.
+# Typix 🧹
+
+A TypeScript library for validating object typings and values with custom rules, offering both strict type checking and value validation.
+
+## 🔗 Repository
+
+[GitHub – ccorgz/typix](https://github.com/ccorgz/typix)
 
 ## Installation
 
 Install via npm:
 
 ```sh
-npm install hmacpass
+npm install typix
 ```
 
 Or using Yarn:
 
 ```sh
-yarn add hmacpass
+yarn add typix
 ```
 
 ## How It Works
 
-### Password Hashing Strategy
-`hmacpass` utilizes HMAC-SHA512 with a randomly generated salt to create a secure password hash.
-- The salt ensures that identical passwords produce different hashes.
-- HMAC (Hash-based Message Authentication Code) provides cryptographic security.
+### Type and Value Validation
+`Typix` helps validate objects by checking their field types and values:
+- Ensures the fields match the expected types.
+- Allows custom value validation rules for each field (e.g., ensuring `ID` is not `-1`).
+- Supports strict validation mode, where all fields must be present and match their types.
 
 ## Usage
 
-### 1. Hashing a Password
+### 1. Validating an Object
 
-```javascript
-import { createPass } from "hmacpass";
-// or
-import hmacpass from "hmacpass";
+```typescript
+import typix from "typix";
 
-const password = "mySecurePassword";
-const { salt, hash } = createPass(password);
-// or
-const { salt, hash } = hmacpass.createPass(password);
+const options = {
+  fields: [
+    { name: "ID", type: "number", validateValue: (value) => value !== -1 }, // Custom rule for ID
+    { name: "NAME", type: "string" },
+    { name: "AGE", type: "number" },
+  ],
+  strict: true,
+};
 
-console.log("Salt:", salt);
-console.log("Hash:", hash);
+const testData = {
+  ID: 1,
+  NAME: "John Doe",
+  AGE: 30,
+};
+
+const result = await typix.validate(options, testData);
+
+console.log(result.isValid);  // true
+console.log(result.message);  // "Field validations were successfull"
 ```
 
 #### What Happens?
-- Generates a **random salt**.
-- Hashes the password using **HMAC-SHA512**.
-- Returns both the **salt** and **hash** for storage.
+- `Typix` checks if the `ID` is a `number` and not equal to `-1`.
+- Validates `NAME` as a `string` and `AGE` as a `number`.
+- Returns a result with validation success or failure.
 
-### 2. Verifying a Password
+### 2. Handling Validation Failures
 
-```javascript
-import { validatePass } from "hmacpass";
-// or
-import hmacpass from "hmacpass";
+```typescript
+import typix from "typix";
 
-const isValid = validatePass("mySecurePassword", salt, hash);
-// or
-const isValid = hmacpass.validatePass("mySecurePassword", salt, hash);
+const options = {
+  fields: [
+    { name: "ID", type: "number", validateValue: (value) => value !== -1 },
+    { name: "NAME", type: "string" },
+    { name: "AGE", type: "number" },
+  ],
+  strict: true,
+};
 
-console.log("Password is valid:", isValid);
+const testData = {
+  ID: "1",  // Invalid type for ID
+  NAME: "John Doe",
+  AGE: 30,
+};
+
+const result = await typix.validate(options, testData);
+
+console.log(result.isValid);  // false
+console.log(result.message);  // "One or more field validations failed"
+console.log(result.expectedFields);  // List of validation errors
 ```
 
-#### How Does Verification Work?
-- The function rehashes the input password using the stored salt.
-- Compares the generated hash with the stored hash.
-- Returns `true` if they match, `false` otherwise.
+#### What Happens?
+- If the `ID` is of the wrong type (e.g., a string instead of a number), the validation will fail.
+- A detailed message with the `expectedType`, `receivedValue`, and error type will be provided.
 
-## Example Use Case
+## Example Use Cases
 
-A common scenario is storing user credentials in a database:
+1. **Strict Mode Validation:**
+   - Ensure that all fields are present and match their expected types.
+   - Custom value checks like ensuring `ID !== -1`.
 
-1. **User Registration:**
-   - Hash the password and store `{ salt, hash }` in the database.
-2. **User Login:**
-   - Retrieve salt and hash from the database and verify the input password.
+2. **Flexible Validation:**
+   - Skip missing fields (non-strict mode).
+   - Customize validation logic for each field (e.g., ID range checks, non-empty string checks).
+
+## Error Types
+
+- **Typing Error**: When a field's type doesn't match the expected type.
+- **Value Error**: When a field's value doesn't meet custom validation rules (e.g., `ID !== -1`).
 
 ## Security Considerations
 
-✅ Uses HMAC-SHA512 for cryptographic security.  
-✅ Protects against rainbow table attacks with unique salts.  
-✅ Suitable for authentication systems and secure password storage.  
+✅ Strict validation mode ensures complete validation of object fields.  
+✅ Custom validation logic gives flexibility to handle complex field rules.  
+✅ Safe for use in form validation, API response checks, and object integrity validation.
 
 ## License
 
