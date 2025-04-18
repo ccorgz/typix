@@ -64,7 +64,7 @@ async function validateTypix(options, data) {
         expectedType: type,
         receivedType: value ? typeof value : null,
         receivedValue: value ? value : String(value),
-        errorType: validateValue && !validateValue(value) ? "value" : "typing",
+        errorType: value ? validateValue && !validateValue(value) ? "value" : "typing" : "value",
       });
     }
   }
