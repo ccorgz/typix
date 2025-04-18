@@ -1,7 +1,6 @@
-import typix from "../src/index";
-import { Options } from "../types/types";
+const typix = require("../src/typix");
 
-const mockOptions: Options = {
+const mockOptions = {
   fields: [
     { name: "ID", type: "number", validateValue: (value) => value !== -1 },
     { name: "NAME", type: "string" },
@@ -56,14 +55,14 @@ test("should validate a wrong object with wrong ID value", async () => {
       field: "ID",
       expectedType: "number",
       receivedType: "number",
-      receivedValue: -1,
+      receivedValue: "-1",
       errorType: "value",
     },
   ]);
 });
 
 test("should not validate a field when field strict is false", async () => {
-  const mockOptionsWithStrict: Options = {
+  const mockOptionsWithStrict = {
     fields: [
       { name: "ID", type: "number" },
       { name: "NAME", type: "string", strict: false },
@@ -84,7 +83,7 @@ test("should not validate a field when field strict is false", async () => {
 });
 
 test("should not validate any field when options strict is false", async () => {
-  const mockOptionsWithStrict: Options = {
+  const mockOptionsWithStrict = {
     fields: [
       { name: "ID", type: "number" },
       { name: "NAME", type: "string", strict: false },

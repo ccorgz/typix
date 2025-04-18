@@ -1,23 +1,18 @@
-import { Options, ValidationResult } from "../types/types";
-
-export async function validate<T extends Record<string, any>>(
-  options: Partial<Options>,
-  data: T
-): Promise<ValidationResult> {
-  const defaultOptions: Options = {
+async function validateTypix(options, data) {
+  const defaultOptions = {
     fields: [],
     strict: true,
   };
 
-  const config: Options = { ...defaultOptions, ...options };
+  const config = { ...defaultOptions, ...options };
 
-  const result: ValidationResult = {
+  const result = {
     message: "One or more field validations failed",
     isValid: true,
     expectedFields: [],
   };
 
-  const validateType = (value: any, expectedType: string): boolean => {
+  function validateType(value, expectedType) {
     if (value === null || value === undefined || value === "") {
       return false;
     }
@@ -37,17 +32,22 @@ export async function validate<T extends Record<string, any>>(
       default:
         return true;
     }
-  };
+  }
 
-  for (const { name, type, strict: fieldStrict, validateValue } of config.fields) {
-    const value: any = data[name];
-    let isValid: boolean = true;
+  for (const {
+    name,
+    type,
+    strict: fieldStrict,
+    validateValue,
+  } of config.fields) {
+    const value = data[name];
+    let isValid = true;
 
-    if (config.strict != false && fieldStrict != false) {
+    if (config.strict !== false && fieldStrict !== false) {
       if (!validateType(value, type)) {
         isValid = false;
       }
-    } else if(fieldStrict != false && config.strict != false) {
+    } else if (fieldStrict !== false && config.strict !== false) {
       if (!(name in data) || !validateType(value, type)) {
         isValid = false;
       }
@@ -62,17 +62,23 @@ export async function validate<T extends Record<string, any>>(
       result.expectedFields.push({
         field: name,
         expectedType: type,
-        receivedType: typeof value,
-        receivedValue: value,
+        receivedType: value ? typeof value : null,
+        receivedValue: value ? value : String(value),
         errorType: validateValue && !validateValue(value) ? "value" : "typing",
       });
     }
   }
 
   result.message =
-    result.isValid == false
+    result.isValid === false
       ? "One or more field validations failed"
       : "Field validations were successfull";
 
-  return result;
+  return {
+    isValid: result.isValid,
+    message: result.message,
+    expectedFields: result.expectedFields,
+  };
 }
+
+module.exports = validateTypix;
