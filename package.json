@@ -1,6 +1,6 @@
 {
   "name": "typix",
-  "version": "1.0.02",
+  "version": "1.0.03",
   "description": "A TypeScript library for validating object typings and values with custom rules, offering both strict type checking and value validation.",
   "main": "index.js",
   "types": "index.d.ts",

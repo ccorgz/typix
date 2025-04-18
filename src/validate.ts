@@ -39,15 +39,15 @@ export async function validate<T extends Record<string, any>>(
     }
   };
 
-  for (const { name, type, validateValue } of config.fields) {
+  for (const { name, type, strict: fieldStrict, validateValue } of config.fields) {
     const value: any = data[name];
     let isValid: boolean = true;
 
-    if (config.strict) {
+    if (config.strict != false && fieldStrict != false) {
       if (!validateType(value, type)) {
         isValid = false;
       }
-    } else {
+    } else if(fieldStrict != false && config.strict != false) {
       if (!(name in data) || !validateType(value, type)) {
         isValid = false;
       }

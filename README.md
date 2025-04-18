@@ -1,4 +1,3 @@
-
 # Typix 🧹
 
 A TypeScript library for validating object typings and values with custom rules, offering both strict type checking and value validation.
@@ -27,7 +26,8 @@ yarn add typix
 `Typix` helps validate objects by checking their field types and values:
 - Ensures the fields match the expected types.
 - Allows custom value validation rules for each field (e.g., ensuring `ID` is not `-1`).
-- Supports strict validation mode, where all fields must be present and match their types.
+- Supports strict validation mode, where all fields must be present and match their types unless specified otherwise.
+- Individual fields can have a `strict` property set to `false`, making them optional and skipping validation if the field is missing or `undefined`.
 
 ## Usage
 
@@ -93,14 +93,73 @@ console.log(result.expectedFields);  // List of validation errors
 - If the `ID` is of the wrong type (e.g., a string instead of a number), the validation will fail.
 - A detailed message with the `expectedType`, `receivedValue`, and error type will be provided.
 
+### 3. Using Field-Level Strictness
+
+```typescript
+import typix from "typix";
+
+const options = {
+  fields: [
+    { name: "ID", type: "number" },
+    { name: "NAME", type: "string", strict: false }, // NAME is optional
+    { name: "AGE", type: "number" },
+  ],
+  strict: true,
+};
+
+const testData = {
+  ID: 1,
+  NAME: undefined, // Skipped due to strict: false
+  AGE: 24,
+};
+
+const result = await typix.validate(options, testData);
+
+console.log(result.isValid);  // true
+console.log(result.message);  // "Field validations were successfull"
+```
+
+#### What Happens?
+- The `NAME` field is optional because its `strict` property is `false`, so `undefined` is allowed.
+- Other fields (`ID` and `AGE`) are still validated as mandatory due to the global `strict: true`.
+
+### 4. Non-Strict Global Validation
+
+```typescript
+import typix from "typix";
+
+const options = {
+  fields: [
+    { name: "ID", type: "number" },
+    { name: "NAME", type: "string", strict: false },
+    { name: "AGE", type: "number" },
+  ],
+  strict: false, // No fields are mandatory
+};
+
+const testData = {
+  ID: undefined,
+  NAME: undefined,
+  AGE: undefined,
+};
+
+const result = await typix.validate(options, testData);
+
+console.log(result.isValid);  // true
+console.log(result.message);  // "Field validations were successfull"
+```
+
+#### What Happens?
+- With `strict: false` at the global level, no fields are mandatory, and missing or `undefined` fields are skipped.
+
 ## Example Use Cases
 
 1. **Strict Mode Validation:**
-   - Ensure that all fields are present and match their expected types.
+   - Ensure that all fields are present and match their expected types (unless `strict: false` is set on a field).
    - Custom value checks like ensuring `ID !== -1`.
 
 2. **Flexible Validation:**
-   - Skip missing fields (non-strict mode).
+   - Skip missing fields with `strict: false` on individual fields or globally.
    - Customize validation logic for each field (e.g., ID range checks, non-empty string checks).
 
 ## Error Types
@@ -112,6 +171,7 @@ console.log(result.expectedFields);  // List of validation errors
 
 ✅ Strict validation mode ensures complete validation of object fields.  
 ✅ Custom validation logic gives flexibility to handle complex field rules.  
+✅ Optional fields with `strict: false` allow for flexible validation scenarios.  
 ✅ Safe for use in form validation, API response checks, and object integrity validation.
 
 ## License

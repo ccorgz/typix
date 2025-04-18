@@ -1,6 +1,7 @@
 export interface Field {
   name: string;
   type: string;
+  strict?: boolean;
   validateValue?: (value: any) => boolean;
 }
 
