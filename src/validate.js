@@ -39,6 +39,7 @@ async function validateTypix(options, data) {
     type,
     strict: fieldStrict,
     validateValue,
+    validateMessage,
   } of config.fields) {
     const value = data[name];
     let isValid = true;
@@ -64,15 +65,21 @@ async function validateTypix(options, data) {
         expectedType: type,
         receivedType: value ? typeof value : null,
         receivedValue: value ? value : String(value),
-        errorType: value ? validateValue && !validateValue(value) ? "value" : "typing" : "value",
+        errorMessage: value
+          ? validateValue && !validateValue(value) && validateMessage
+            ? validateMessage
+            : validateValue && !validateValue(value)
+            ? "Error on value"
+            : "Error on typing"
+          : `Field "${name}" not informed`,
       });
     }
   }
 
   result.message =
     result.isValid === false
-      ? "One or more field validations failed"
-      : "Field validations were successfull";
+      ? "Field validations failed"
+      : "Field validations completed";
 
   return {
     isValid: result.isValid,

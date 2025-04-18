@@ -54,7 +54,7 @@ const testData = {
 const result = await typix.validate(options, testData);
 
 console.log(result.isValid);  // true
-console.log(result.message);  // "Field validations were successfull"
+console.log(result.message);  // "Field validations were successful"
 ```
 
 #### What Happens?
@@ -116,7 +116,7 @@ const testData = {
 const result = await typix.validate(options, testData);
 
 console.log(result.isValid);  // true
-console.log(result.message);  // "Field validations were successfull"
+console.log(result.message);  // "Field validations were successful"
 ```
 
 #### What Happens?
@@ -146,7 +146,7 @@ const testData = {
 const result = await typix.validate(options, testData);
 
 console.log(result.isValid);  // true
-console.log(result.message);  // "Field validations were successfull"
+console.log(result.message);  // "Field validations were successful"
 ```
 
 #### What Happens?
